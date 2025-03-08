@@ -1,3 +1,5 @@
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -6,12 +8,18 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.*;
 
 public class ApiTests {
+    @BeforeAll
+    public static void setUp() {
+        RestAssured.baseURI = "https://reqres.in";
+        RestAssured.basePath = "/api";
+    }
 
     @Test
-    void checkTotalValue (){
+    void checkTotalValueTest (){
         given()
                 .log().uri()
-                .get("https://reqres.in/api/users?page=2")
+                .queryParam("page", 2)
+                .get("/users")
                 .then()
                 .log().status()
                 .log().body()
@@ -21,7 +29,7 @@ public class ApiTests {
 
     }
     @Test
-    void createUser() {
+    void createUserTest() {
 
         String data = "{\"name\": \"morpheus\", \"job\": \"leader\"}";
 
@@ -30,7 +38,7 @@ public class ApiTests {
                 .contentType(JSON)
                 .log().uri()
                 .when()
-                .post("https://reqres.in/api/users")
+                .post("/users")
                 .then()
                 .log().status()
                 .log().body()
@@ -41,7 +49,7 @@ public class ApiTests {
 
     }
     @Test
-    void updateUser() {
+    void updateUserTest() {
 
         String data = "{\"name\": \"morpheus\", \"job\": \"zion resident\"}";
 
@@ -50,7 +58,8 @@ public class ApiTests {
                 .contentType(JSON)
                 .log().uri()
                 .when()
-                .put("https://reqres.in/api/users/2")
+                .queryParam("2")
+                .put("/users/")
                 .then()
                 .log().status()
                 .log().body()
@@ -59,10 +68,11 @@ public class ApiTests {
     }
 
     @Test
-    void deleteUser(){
+    void deleteUserTest(){
         given()
                 .when()
-                .delete("https://reqres.in/api/users/2")
+                .queryParam("2")
+                .delete("/users/")
                 .then()
                 .statusCode(204);
     }
@@ -77,7 +87,7 @@ public class ApiTests {
                 .contentType(JSON)
                 .log().uri()
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
                 .log().status()
                 .log().body()

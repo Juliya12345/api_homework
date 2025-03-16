@@ -1,22 +1,54 @@
 plugins {
     id 'java-library'
-}
+    id 'io.qameta.allure' version '2.11.2'
+    id "io.freefair.lombok" version '6.0.0-m2'
 
+}
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(
-            'io.rest-assured:rest-assured:5.3.1',
-            "org.junit.jupiter:junit-jupiter:5.10.0",
-            'org.slf4j:slf4j-simple:2.0.7'
-    )
+compileJava {
+    options.encoding = 'UTF-8'
 }
 
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+def restAssuredVersion = "5.4.0",
+    allureVersion = "2.27.0"
+
+allure {
+    report {
+        version.set(allureVersion)
+    }
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            junit5 {
+                adapterVersion.set(allureVersion)
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation(
+
+            "io.rest-assured:rest-assured:$restAssuredVersion",
+            "io.rest-assured:json-schema-validator:$restAssuredVersion",
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
+            "org.junit.jupiter:junit-jupiter:5.10.2",
+            'org.slf4j:slf4j-simple:2.0.13',
+            "org.assertj:assertj-core:3.26.0"
+
+
+    )
+}
 tasks.withType(Test) {
     useJUnitPlatform()
-
+    systemProperties(System.getProperties())
     testLogging {
         lifecycle {
             events "started", "skipped", "failed", "standard_error", "standard_out"

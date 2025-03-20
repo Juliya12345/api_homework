@@ -6,12 +6,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static specs.ApiSpecs.*;
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class ApiTests {
     @BeforeAll
@@ -29,13 +29,14 @@ public class ApiTests {
                             .queryParam("page", 2)
                             .get("/users")
                             .then()
-                            .spec(response200Spec)
+                            .spec(getBaseResponseSpec(200))
                             .body("total", is(12));
         }
 
     @Test
     @DisplayName("Создание пользователя")
     void createUserTest() {
+
         CreateUserModel newUser = new CreateUserModel();
         newUser.setName("morpheus");
         newUser.setJob("leader");
@@ -46,7 +47,7 @@ public class ApiTests {
                     .when()
                     .post("/users")
                     .then()
-                    .spec(response201Spec)
+                    .spec(getBaseResponseSpec(201))
                     .extract().as(CreateUserResponseModel.class)
     );
 
@@ -74,7 +75,8 @@ public class ApiTests {
                         .queryParam("2")
                         .put("/users/")
                         .then()
-                        .spec(response200Spec)
+//                        .spec(responseSpec)
+                        .spec(getBaseResponseSpec(200))
                         .extract().as(UpdateUserResponseModel.class)
         );
 
@@ -94,7 +96,7 @@ public class ApiTests {
                 .queryParam("2")
                 .delete("/users/")
                 .then()
-                .spec(response204Spec);
+                .spec(getBaseResponseSpec(204));
 
     }
 
@@ -111,7 +113,7 @@ public class ApiTests {
                                 .when()
                                 .post("/login")
                                 .then()
-                                .spec(response400Spec)
+                                .spec(getBaseResponseSpec(400))
                                 .extract().as(ErrorResponseModel.class)
         );
 
